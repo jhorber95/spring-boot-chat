@@ -17,13 +17,16 @@ import java.security.Principal;
 @Controller
 public class GreetingController {
 
-	@Autowired
-	private SimpMessagingTemplate messagingTemplate;
+	private final SimpMessagingTemplate messagingTemplate;
+
+	public GreetingController(SimpMessagingTemplate messagingTemplate) {
+		this.messagingTemplate = messagingTemplate;
+	}
 
 	@MessageMapping("/hello")
 	public void greeting(Principal principal, HelloMessage message) throws  Exception {
 		Greeting greeting = new Greeting();
-		greeting.setContent("Hello !");
+		greeting.setContent(message.getName());
 
 		messagingTemplate.convertAndSendToUser(message.getToUser(), "/queue/reply", greeting);
 	}
